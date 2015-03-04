@@ -6,6 +6,7 @@ import numpy as np
 
 __author__ = 'pjacobs'
 
+
 def apply_to_all_rows(data_matrix, column_to_apply_on, value=float("inf")):
     # NOTE: column_to_apply_on needs to be the same length as the # of rows
     (rows, cols) = data_matrix.shape
