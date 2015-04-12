@@ -11,9 +11,9 @@ def apply_to_all_rows(data_matrix, column_to_apply_on, value=float("inf")):
     # NOTE: column_to_apply_on needs to be the same length as the # of rows
     (rows, cols) = data_matrix.shape
     for i in range(rows):
-        data_matrix[i, column_to_apply_on[i]] = value
+        data_matrix[i, int(column_to_apply_on[i])] = value
 
-
+# Return a tuple of the min value in the passed in vector and the index where that value occurs
 def min_vector(vector):
     min_value = float("inf")
     min_index = 0
@@ -130,6 +130,7 @@ def anchor_graph(data_matrix, anchor_matrix, closest_anchors, weight_flag, num_i
     # TODO: Use better indexing
     for i in range(num_samples):
         for j in range(closest_anchors):
-            weight_matrix[i, indices_closest_anchors[i, j]] = distances_closest_anchors[i, j]
+            weight_matrix[i, int(indices_closest_anchors[i, j])] = distances_closest_anchors[i, j]
 
     return weight_matrix
+
