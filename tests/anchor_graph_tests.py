@@ -26,6 +26,7 @@ def exhaustive_matrix_match(matrix1, matrix2):
     return True
 
 def test_basic():
+    print "test_basic"
     # TODO: cleanup the weird file paths
     matlab_data_map = scipy.io.loadmat('tests/USPS-MATLAB-train.mat')
     data_matrix = matlab_data_map['samples']
@@ -34,6 +35,7 @@ def test_basic():
     # is d x m.
     matlab_data_map = scipy.io.loadmat('tests/usps_anchor_1000.mat')
     anchor_matrix = matlab_data_map['anchor'].transpose()
+    print "finished loading"''
 
     # calculate the weight graph Z (n x m)
     s = 3
@@ -42,6 +44,7 @@ def test_basic():
     # get the canonical Z matrix from the matlab code
     matlab_data_map = scipy.io.loadmat('tests/USPS-MATLAB-Anchor-Graph.mat')
     canonical_z = matlab_data_map['Z']
+    print "got ours"
 
     # NOTE: Due to, what I assume are floating point rounding differences, the pure array_equal returns false
     #assert np.array_equal(canonical_z, our_z)

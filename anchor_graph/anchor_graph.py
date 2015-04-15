@@ -63,13 +63,16 @@ def square_distance(matrix1, matrix2):
     return distances
 
 
-def anchor_graph(data_matrix, anchor_matrix, closest_anchors, weight_flag, num_iterations=0):
+def build_anchor_graph(data_matrix, anchor_matrix, closest_anchors, weight_flag, num_iterations=0):
     """
     data_matrix: is (d x n) matrix of the input data; where 'n' is the number of samples and 'd' is the dimension of
     each sample.
     anchor_matrix: is the (d x m) matrix of anchors; where 'm' is the number of anchors and 'd' is the dimension of each
     anchor.  The anchors are generally not samples in the data_matrix but are derived from it.
-    closest_anchors must be less than the total number of anchors
+    closest_anchors must be less than the total number of anchors; this is 's' variable; it's how many closest anchors
+    we look for each sample
+
+    Return The Z matrix (weight) which is (n x m).  Represents the weighted connection between samples and anchors.
     """
 
     # Extract important parameters from the dimensions of the matrices
@@ -134,3 +137,19 @@ def anchor_graph(data_matrix, anchor_matrix, closest_anchors, weight_flag, num_i
 
     return weight_matrix
 
+def convert_z_to_w(Z):
+    # NOTE: Formula I have for the W creation from Z -- in MATLAB -- W = Z*diag(sum(Z).^-1)*transpose(Z)
+    # diag(V) returns a square diagonal matrix with the elements of vector V on the main diagonal
+    # so sum(Z) will return a vector where each element in the vector is the sum of that associated column in Z.
+    # then .^-1 does an element-wise 1/x on each x
+    # Z is a (n x m) matrix and we want to return the (n x n) matrix, W.
+    # In dimension terms we have (n x n) = (n x m) * (m x m) * (m x n)
+
+    # sum of the columns; make sure that Z is a float type array; produces a vector of length "m"; one element per column
+    column_vector_sum = np.sum(np.asarray(Z, dtype=np.float), axis=0)
+
+    # take each element to the power of -1
+    power_vector = np.power(column_vector_sum, -1)
+
+    # now put this power vector as the diagonal of matrix of zeros; multiple by the transpose
+    return Z.dot(np.diag(power_vector)).dot(Z.transpose())
