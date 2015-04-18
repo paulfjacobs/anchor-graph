@@ -14,11 +14,21 @@ from sklearn.neighbors import NearestNeighbors
 # data is a 2D np.array
 def nearest_neighbor_graph(data, number_of_neighbors):
     # adding +1 for the reason explained above
-    nbrs = NearestNeighbors(n_neighbors=number_of_neighbors+1, algorithm='ball_tree').fit(data)
+    nbrs = NearestNeighbors(n_neighbors=number_of_neighbors + 1, algorithm='ball_tree').fit(data)
     graph = nbrs.kneighbors_graph(data).toarray()
 
     # remove self-loops in graph
     return graph - np.identity(len(data))
+
+
+# Get the average degree
+def average_degree(adjacency):
+    (n, n) = adjacency.shape
+    avg_degree = 0.0
+    for i in range(n):
+        avg_degree += float(np.count_nonzero(adjacency[i])) / n
+    return avg_degree
+
 
 if __name__ == "__main__":
     matlab_data_map = scipy.io.loadmat('tests/USPS-MATLAB-train.mat')
@@ -35,10 +45,16 @@ if __name__ == "__main__":
     our_z = build_anchor_graph(data_matrix, anchor_matrix, s, 0)
 
     # convert to W; this is the adjacency matrix for the original samples
+    # our_w[0,0] is occupied...that's not good
     our_w = convert_z_to_w(our_z)
 
     # NOTE: Is "s" the best choice to use for the NN? Maybe look at the average degree
 
+    print "Average degree %f" % average_degree(our_w)
+
+
     # build the NN
     real_nn = nearest_neighbor_graph(data_matrix.transpose(), s)
     print "Got both."
+
+    print "Average degree %f" % average_degree(real_nn)
